@@ -36,7 +36,7 @@ def optimize(value_net_key, value_net, optimizer, loader,
 
 if __name__ == '__main__':
     args = config_parser().parse_args()
-    ray.init(log_to_driver=False)
+    ray.init(log_to_driver=True, local_mode=True)
     seed_all(args.seed)
     policy, optimizer, dataset_path = setup_network(args)
     criterion = torch.nn.functional.mse_loss

@@ -1,6 +1,6 @@
 # The docker file is built follwing heavily the instructions here:
 # https://medium.com/@benjamin.botto/opengl-and-cuda-applications-in-docker-af0eece000f1
-FROM nvidia/cuda:9.2-devel-ubuntu18.04
+FROM nvcr.io/nvidia/cuda:9.2-devel-ubuntu18.04
 
 # Dependencies for glvnd and X11.
 RUN apt-get update \

@@ -289,6 +289,7 @@ def generate_tasks_helper(path: str,  gui: bool, **kwargs):
         not gui,  # headless: bool
         gui,  # render: bool
         720, 720)  # camera dimensions: int x int
+    print("pranay Pyflex init done")
     action_tool = PickerPickPlace(
         num_picker=2,
         particle_radius=0.00625,
@@ -482,16 +483,21 @@ if __name__ == "__main__":
     parser.add_argument("--strict_min_edge_length", type=int, default=64)
     parser.add_argument("--max_cloth_size", type=int, default=104)
     args = parser.parse_args()
-    ray.init()
+    ray.init(log_to_driver=True, local_mode=True)
     helper_fn = ray.remote(generate_tasks_helper).options(
         num_gpus=torch.cuda.device_count()/args.num_processes)
+    
+    print("HANDLE 0 ")
     handles = [helper_fn.remote(**vars(args))
                for _ in range(args.num_processes)]
+    print("handl 1")
     with tqdm(total=args.num_tasks,
               desc='Generating tasks',
               dynamic_ncols=True) as pbar:
         while True:
+            print("handl 2")
             ray.wait(handles, timeout=5)
+            print("handl 3")
             if not os.path.exists(args.path):
                 continue
             with FileLock(args.path + '.lock'):

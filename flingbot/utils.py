@@ -84,7 +84,7 @@ def config_parser(parser=None):
                         help="Scale factors to use")
     parser.add_argument(
         '--render_engine', choices=['blender', 'opengl'],
-        help="Which backend to render cloths with.", default='blender')
+        help="Which backend to render cloths with.", default='opengl')
     return parser
 
 

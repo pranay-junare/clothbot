@@ -8,13 +8,13 @@ dependencies:
   - pytorch
   - torchvision
   - scipy
-  - cudatoolkit=10.1
-  - imageio
+  - cudatoolkit=11.8
+  - imageio=2.19.3
   - matplotlib
   - numpy
   - pip
   - pybind11
-  - python=3.6
+  - python=3.8
   - scikit-image
   - seaborn
   - pip:

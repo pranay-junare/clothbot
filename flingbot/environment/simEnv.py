@@ -126,6 +126,7 @@ class SimEnv:
             not self.gui,  # headless: bool.
             True,      # render: bool
             720, 720)  # camera dimensions: int x int
+        print("pranay pyflex")
         self.action_tool = PickerPickPlace(
             num_picker=2,
             particle_radius=self.particle_radius,
