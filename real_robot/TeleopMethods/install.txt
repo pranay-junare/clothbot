@@ -1,0 +1,9 @@
+mamba install python mamba ros-noetic-desktop
+
+
+Thanks to Shaluols/ur5e-fk
+pip3 install ur_rtde
+
+# apt install libsystemd-dev
+# apt-get install pkg-config
+# pip install systemd-python
