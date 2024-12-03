@@ -1,0 +1,233 @@
+[global_config]
+  suppress_multiple_term_dialog = True
+[keybindings]
+[profiles]
+  [[default]]
+    cursor_color = "#aaaaaa"
+  [[ROS]]
+    cursor_color = "#aaaaaa"
+    exit_action = hold
+[layouts]
+  [[default]] 
+    [[[child0]]]
+      type = Window
+      parent = ""
+      order = 0
+      position = 72:0
+      maximised = True
+      fullscreen = False
+      size = 1848, 1043
+      title = rpmdt05@cs-u-rpm-dt-04: ~
+      last_active_term = 508cebc7-b01b-4e00-aa61-116ae40cf17c
+      last_active_window = False
+    [[[terminal1]]]
+      type = Terminal
+      parent = child0
+      order = 0
+      profile = default
+      uuid = 508cebc7-b01b-4e00-aa61-116ae40cf17c
+    [[[child2]]]
+      type = Window
+      parent = ""
+      order = 0
+      position = 72:0
+      maximised = True
+      fullscreen = False
+      size = 1848, 1043
+      title = rpmdt05@cs-u-rpm-dt-04: ~
+      last_active_term = 7105afab-1883-4d6b-ad02-f127e5c47585
+      last_active_window = True
+    [[[child3]]]
+      type = VPaned
+      parent = child2
+      order = 0
+      position = 519
+      ratio = 0.5
+    [[[child4]]]
+      type = HPaned
+      parent = child3
+      order = 0
+      position = 922
+      ratio = 0.5002712967986978
+    [[[child5]]]
+      type = VPaned
+      parent = child4
+      order = 0
+      position = 257
+      ratio = 0.5
+    [[[terminal6]]]
+      type = Terminal
+      parent = child5
+      order = 0
+      profile = ROS
+      command = source /home/rpmdt05/Code/zeus_ws/devel/setup.bash; roslaunch dual_arm zeus_bringup.launch
+      uuid = d9ef7f90-ebb0-4ff0-bb89-01fea76832e8
+    [[[terminal7]]]
+      type = Terminal
+      parent = child5
+      order = 1
+      profile = ROS
+      command = source /home/rpmdt05/Code/zeus_ws/devel/setup.bash; sleep 10; roslaunch dual_arm zeus_moveit.launch
+      uuid = 7105afab-1883-4d6b-ad02-f127e5c47585
+    [[[child8]]]
+      type = VPaned
+      parent = child4
+      order = 1
+      position = 453
+      ratio = 0.8813229571984436
+    [[[child9]]]
+      type = HPaned
+      parent = child8
+      order = 0
+      position = 460
+      ratio = 0.5
+    [[[terminal10]]]
+      type = Terminal
+      parent = child9
+      order = 0
+      profile = default
+      uuid = 75a2e471-4c6b-4ff2-8075-74c028418474
+      source /home/rpmdt05/Code/zeus_ws/devel/setup.bash; sleep 10; rosrun robotiq_2f_gripper_control Robotiq2FGripperSimpleControllerRight.py
+    [[[terminal11]]]
+      type = Terminal
+      parent = child9
+      order = 1
+      profile = default
+      uuid = 4ca160b1-2af2-4251-8b4d-a8770694dfd0
+      source /home/rpmdt05/Code/zeus_ws/devel/setup.bash; sleep 10; rosrun robotiq_2f_gripper_control Robotiq2FGripperRtuNodeRight.py /tmp/ttyThunder
+    [[[terminal12]]]
+      type = Terminal
+      parent = child8
+      order = 1
+      profile = default
+      uuid = 6da752b5-20fb-4400-bf5b-5a037a288913
+      command = source /home/rpmdt05/Code/zeus_ws/devel/setup.bash; sleep 10; rosrun dual_arm forward_joint_states.py
+    [[[child13]]]
+      type = HPaned
+      parent = child3
+      order = 1
+      position = 922
+      ratio = 0.5002712967986978
+    [[[terminal14]]]
+      type = Terminal
+      parent = child13
+      order = 0
+      profile = ROS
+      uuid = 7dffbfc6-338f-45de-8b43-8707b2ad3c28
+      command = source /home/rpmdt05/Code/zeus_ws/devel/setup.bash; sleep 10; python3 /home/rpmdt05/Code/spark_ws/Spark/Firmware/ROS_RX/SparkNode.py
+    [[[terminal15]]]
+      type = Terminal
+      parent = child13
+      order = 1
+      profile = ROS
+      uuid = 4761522d-4e92-4cce-ad18-50aa79a89b68
+      command = source /home/rpmdt05/Code/zeus_ws/devel/setup.bash; sleep 10; python3 /home/rpmdt05/Code/spark_ws/Spark/Firmware/ROS_RX/run.py
+  [[spark]]
+    [[[child0]]]
+      type = Window
+      parent = ""
+      order = 0
+      position = 72:0
+      maximised = True
+      fullscreen = False
+      size = 1848, 1043
+      title = rpmdt05@cs-u-rpm-dt-04: ~
+      last_active_term = 508cebc7-b01b-4e00-aa61-116ae40cf17c
+      last_active_window = False
+    [[[terminal1]]]
+      type = Terminal
+      parent = child0
+      order = 0
+      profile = default
+      uuid = 508cebc7-b01b-4e00-aa61-116ae40cf17c
+      command = "echo test" 
+    [[[child2]]]
+      type = Window
+      parent = ""
+      order = 0
+      position = 72:0
+      maximised = True
+      fullscreen = False
+      size = 1848, 1043
+      title = rpmdt05@cs-u-rpm-dt-04: ~
+      last_active_term = 7105afab-1883-4d6b-ad02-f127e5c47585
+      last_active_window = True
+    [[[child3]]]
+      type = VPaned
+      parent = child2
+      order = 0
+      position = 519
+      ratio = 0.5
+    [[[child4]]]
+      type = HPaned
+      parent = child3
+      order = 0
+      position = 922
+      ratio = 0.5002712967986978
+    [[[child5]]]
+      type = VPaned
+      parent = child4
+      order = 0
+      position = 257
+      ratio = 0.5
+    [[[terminal6]]]
+      type = Terminal
+      parent = child5
+      order = 0
+      profile = default
+      uuid = d9ef7f90-ebb0-4ff0-bb89-01fea76832e8
+    [[[terminal7]]]
+      type = Terminal
+      parent = child5
+      order = 1
+      profile = default
+      uuid = 7105afab-1883-4d6b-ad02-f127e5c47585
+    [[[child8]]]
+      type = VPaned
+      parent = child4
+      order = 1
+      position = 453
+      ratio = 0.8813229571984436
+    [[[child9]]]
+      type = HPaned
+      parent = child8
+      order = 0
+      position = 460
+      ratio = 0.5
+    [[[terminal10]]]
+      type = Terminal
+      parent = child9
+      order = 0
+      profile = default
+      uuid = 75a2e471-4c6b-4ff2-8075-74c028418474
+    [[[terminal11]]]
+      type = Terminal
+      parent = child9
+      order = 1
+      profile = default
+      uuid = 4ca160b1-2af2-4251-8b4d-a8770694dfd0
+    [[[terminal12]]]
+      type = Terminal
+      parent = child8
+      order = 1
+      profile = default
+      uuid = 6da752b5-20fb-4400-bf5b-5a037a288913
+    [[[child13]]]
+      type = HPaned
+      parent = child3
+      order = 1
+      position = 922
+      ratio = 0.5002712967986978
+    [[[terminal14]]]
+      type = Terminal
+      parent = child13
+      order = 0
+      profile = default
+      uuid = 7dffbfc6-338f-45de-8b43-8707b2ad3c28
+    [[[terminal15]]]
+      type = Terminal
+      parent = child13
+      order = 1
+      profile = default
+      uuid = 4761522d-4e92-4cce-ad18-50aa79a89b68
+[plugins]

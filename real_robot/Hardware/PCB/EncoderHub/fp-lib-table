@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "SFH11-PBPC-D10-ST-BK")(type "KiCad")(uri "${KIPRJMOD}/SFH11-PBPC-D10-ST-BK")(options "")(descr ""))
+)

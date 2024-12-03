@@ -3,7 +3,7 @@ import numpy as np
 import quaternion
 from scipy.spatial.transform import Rotation as R
 import os
-from UR.fk import forward_6
+from UR.kinematics import forward_6
 from std_msgs.msg import Float32MultiArray, Float32, Bool, Int32
 
 # ROS functions ------------------------------------------------------------------------------

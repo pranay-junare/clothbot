@@ -1,0 +1,31 @@
+<!-- Launch files for Spark Setup -->
+<launch>
+    <!-- Run these commands: 
+    roslaunch dual_arm zeus_bringup.launch
+    roslaunch zeus_moveit_config move_group.launch
+    rosrun dual_arm forward_joint_states.py
+    rosrun robotiq_2f_gripper_control Robotiq2FGripperRtuNodeLeft.py /tmp/ttyLightning
+    rosrun robotiq_2f_gripper_control Robotiq2FGripperRtuNodeRight.py /tmp/ttyThunder
+    -->
+    <!-- <arg name="arms" default="both" /> -->
+
+    <!-- Bring up the arms -->
+    <include file="$(find dual_arm)/launch/zeus_bringup.launch" />
+
+    <!-- Launch MoveIt! -->
+    <include file="$(find zeus_moveit_config)/launch/move_group.launch" />
+
+    <!-- Launch forward_joint_states.py -->
+    <node name="forward_joint_states" pkg="dual_arm" type="forward_joint_states.py" output="screen" />
+    
+    <!-- Launch Lightning gripper -->
+    <node name="robotiq_left" pkg="robotiq_2f_gripper_control" type="Robotiq2FGripperRtuNodeLeft.py" output="screen">
+        <param name="port" value="/tmp/ttyLightning"/>
+    </node>
+    
+    <!-- Launch Thunder gripper -->
+    <node name="robotiq_right" pkg="robotiq_2f_gripper_control" type="Robotiq2FGripperRtuNodeRight.py" output="screen">
+        <param name="port" value="/tmp/ttyThunder"/>
+    </node>
+</launch>
+    

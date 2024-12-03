@@ -61,10 +61,6 @@ class UR:
         self.ur_control[name].servoJ(perams[0], perams[1], perams[2], perams[3], perams[4], perams[5])
 
     def moveJ(self, name, perams):
-        # print(f"MoveJ: {perams}")
-        if self.mode[name] != 'moveJ':
-            self.stop(name)
-            self.mode[name] = 'moveJ'
         self.ur_control[name].moveJ(perams[0], perams[1], perams[2])
 
     def moveL(self, name, perams):

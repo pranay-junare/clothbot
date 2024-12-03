@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<launch>
+    <group ns="right">
+        <include file="$(find ur_robot_driver)/launch/ur5e_bringup.launch">
+            <!-- <arg name="controllers" default="right_joint_state_controller right_scaled_pos_joint_traj_controller right_force_torque_sensor_controller right_robot_status_controller"/> -->
+            <!-- <arg name="stopped_controllers" default="pos_joint_traj_controller joint_group_pos_controller joint_group_vel_controller" doc="Controllers that are initally loaded, but not started."/>        <arg name="robot_ip" value="192.168.43.92" /> -->
+            <arg name="robot_description_file" value="$(find dual_arm)/launch/load_dual_arm.launch" />
+            <!-- <arg name="kinematics_config" value="$(find dual_arm)/config/arm_calibration.yaml" /> -->
+            <!-- <arg name="controller_config_file" default="$(find dual_arm)/config/right_controllers.yaml" /> -->
+            <arg name="controllers" default="joint_state_controller scaled_pos_joint_traj_controller force_torque_sensor_controller robot_status_controller"/>
+            <!-- <arg name="robot_description_file" default="$(find ur_description)/launch/load_ur5e.launch" doc="Robot description launch file."/> -->
+            <arg name="controller_config_file" default="$(find dual_arm)/config/right_ur5e_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
+            <arg name="robot_ip" default="192.168.0.101" doc="IP address by which the robot can be reached."/>
+            <arg name="reverse_port" default="50005" doc="Port that will be opened by the driver to allow direct communication between the driver and the robot controller."/>
+            <arg name="script_sender_port" default="50006" doc="The driver will offer an interface to receive the program's URScript on this port. If the robot cannot connect to this port, `External Control` will stop immediately."/>
+            <arg name="trajectory_port" default="50007" doc="Port that will be opened by the driver to allow trajectory forwarding."/>
+            <arg name="script_command_port" default="50008" doc="Port that will be opened by the driver to allow forwarding script commands to the robot."/>
+            <arg name="use_tool_communication" default="true" doc="On e-Series robots tool communication can be enabled with this argument"/>
+            <arg name="tool_voltage" default="24" doc="Tool voltage set at the beginning of the UR program. Only used, when `use_tool_communication` is set to true."/>
+            <arg name="tool_device_name" default="/tmp/ttyThunder" doc="Local device name used for tool communication. Only used, when `use_tool_communication` is set to true."/>
+        </include>
+    </group>
+
+    <group ns="left">
+        <include file="$(find ur_robot_driver)/launch/ur5e_bringup.launch">
+            <!-- <arg name="controllers" default="left_joint_state_controller left_scaled_pos_joint_traj_controller left_force_torque_sensor_controller robot_status_controller"/> -->
+            <!-- <arg name="stopped_controllers" default="pos_joint_traj_controller joint_group_pos_controller joint_group_vel_controller" doc="Controllers that are initally loaded, but not started."/>        <arg name="robot_ip" value="192.168.43.92" /> -->
+            <arg name="robot_description_file" value="$(find dual_arm)/launch/load_dual_arm.launch" />
+            <!-- <arg name="kinematics_config" value="$(find dual_arm)/config/arm_calibration.yaml" /> -->
+            <!-- <arg name="controller_config_file" default="$(find dual_arm)/config/left_controllers.yaml" /> -->
+            <arg name="controllers" default="joint_state_controller scaled_pos_joint_traj_controller force_torque_sensor_controller robot_status_controller"/>
+            <!-- <arg name="robot_description_file" default="$(find ur_description)/launch/load_ur5e.launch" doc="Robot description launch file."/> -->
+            <arg name="controller_config_file" default="$(find dual_arm)/config/left_ur5e_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
+            <arg name="robot_ip" default="192.168.0.102" doc="IP address by which the robot can be reached."/>
+            <arg name="reverse_port" default="50001" doc="Port that will be opened by the driver to allow direct communication between the driver and the robot controller."/>
+            <arg name="script_sender_port" default="50002" doc="The driver will offer an interface to receive the program's URScript on this port. If the robot cannot connect to this port, `External Control` will stop immediately."/>
+            <arg name="trajectory_port" default="50003" doc="Port that will be opened by the driver to allow trajectory forwarding."/>
+            <arg name="script_command_port" default="50004" doc="Port that will be opened by the driver to allow forwarding script commands to the robot."/>
+            <arg name="use_tool_communication" default="true" doc="On e-Series robots tool communication can be enabled with this argument"/>
+            <arg name="tool_voltage" default="24" doc="Tool voltage set at the beginning of the UR program. Only used, when `use_tool_communication` is set to true."/>
+            <arg name="tool_device_name" default="/tmp/ttyLightning" doc="Local device name used for tool communication. Only used, when `use_tool_communication` is set to true."/>
+        </include>
+    </group>
+
+</launch>

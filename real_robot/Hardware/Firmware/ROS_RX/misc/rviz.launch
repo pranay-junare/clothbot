@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find zeus_moveit_config)/launch/moveit_rviz.launch">
+        <arg name="rviz_config" default="$(find zeus_moveit_config)/launch/pointcloud.rviz"/>
+    </include>
+</launch>

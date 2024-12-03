@@ -1,0 +1,12 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/rpmdt05/Code/recycle_ws/devel/lib/python3/dist-packages",
+        "/home/rpmdt05/Code/zeus_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/rpmdt05/Code/recycle_ws/devel/lib/python3/dist-packages",
+        "/home/rpmdt05/Code/zeus_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
+}
