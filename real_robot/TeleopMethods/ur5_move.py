@@ -77,7 +77,56 @@ def arms_grasp(ur5, poses, offsets):
         # Close Gripper
         ur5.URs.get_gripper(arm).set(255)
 
+
+# Define a Function to Move Arm along X-axis
+def move_along_x(ur5, arm, distance, direction):
+    
+    # Get the Current Pose
+    pose = ur5.URs.get_receive(arm).getActualTCPPose()
+    
+    # Update the Pose according to Direction
+    if direction == "down":
+        pose[0] += (distance * 0.01)
+    else:
+        pose[0] -= (distance * 0.01)
+    
+    # Move the Arm
+    ur5.URs.moveL(arm, (pose, 0.02, 0.05, 0))
+
+
+# Define a Function to Move Arm along Y-axis
+def move_along_y(ur5, arm, distance, direction):
+    
+    # Get the Current Pose
+    pose = ur5.URs.get_receive(arm).getActualTCPPose()
+    
+    # Update the Pose according to Direction
+    if direction == "left":
+        pose[1] += (distance * 0.01)
+    else:
+        pose[1] -= (distance * 0.01)
+    
+    # Move the Arm
+    ur5.URs.moveL(arm, (pose, 0.02, 0.05, 0))
+
+
+# Define a Function to Move Arm along Z-axis
+def move_along_z(ur5, arm, distance, direction):
+    
+    # Get the Current Pose
+    pose = ur5.URs.get_receive(arm).getActualTCPPose()
+    
+    # Update the Pose according to Direction
+    if direction == "front":
+        pose[2] += (distance * 0.01)
+    else:
+        pose[2] -= (distance * 0.01)
+    
+    # Move the Arm
+    ur5.URs.moveL(arm, (pose, 0.02, 0.05, 0))
+
   
+
 # Define the Main Function
 def main():
     
@@ -87,16 +136,6 @@ def main():
     # Come to Home Position
     print("Setting Home Position")
     come_home_position(ur5)
-
-    # Initialise Dictionary to store Poses wrt Base for all Arms
-    poses = get_arms_poses(ur5)    
-    
-    offsets = {}
-    offsets['Thunder'] = [0, 0, 0.1, 0, 0, 0]
-    offsets['Lightning'] = [0.1, 0, 0, 0, 0, 0]
-    
-    # Move Arms to given Locations and Grasp
-    arms_grasp(ur5, poses, offsets)
 
 
 
