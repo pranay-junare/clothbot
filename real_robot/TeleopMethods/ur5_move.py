@@ -125,6 +125,56 @@ def move_along_z(ur5, arm, distance, direction):
     # Move the Arm
     ur5.URs.moveL(arm, (pose, 0.02, 0.05, 0))
 
+
+# Define a Function to Move Arm Front
+def move_front(ur5, arm, distance):
+    
+    # Move the Arm along Z-axis
+    move_along_z(ur5, arm, distance, "front")
+
+
+# Define a Function to Move Arm Back
+def move_back(ur5, arm, distance):
+    
+    # Move the Arm along Z-axis
+    move_along_z(ur5, arm, distance, "back")
+
+
+# Define a Function to Move Arm Left
+def move_left(ur5, arm, distance):
+    
+    # Move the Arm along Y-axis
+    if arm == "Lightning":
+        distance = -distance
+    move_along_y(ur5, arm, distance, "left")
+
+
+# Define a Function to Move Arm Right
+def move_right(ur5, arm, distance):
+    
+    # Move the Arm along Y-axis
+    if arm == "Lightning":
+        distance = -distance
+    move_along_y(ur5, arm, distance, "right")
+
+
+# Define a Function to Move Arm Up
+def move_up(ur5, arm, distance):
+    
+    # Move the Arm along X-axis
+    if arm == "Lightning":
+        distance = -distance
+    move_along_x(ur5, arm, distance, "up")
+
+
+# Define a Function to Move Arm Down
+def move_down(ur5, arm, distance):
+    
+    # Move the Arm along X-axis
+    if arm == "Lightning":
+        distance = -distance
+    move_along_x(ur5, arm, distance, "down")
+
   
 
 # Define the Main Function
@@ -134,8 +184,23 @@ def main():
     ur5 = UR5()
 
     # Come to Home Position
-    print("Setting Home Position")
-    come_home_position(ur5)
+    #print("Setting Home Position")
+    #come_home_position(ur5)
+    move_up(ur5, 'Thunder', 2)
+    move_up(ur5, 'Lightning', 2)
+    move_down(ur5, 'Thunder', 2)
+    move_down(ur5, 'Lightning', 2)
+
+    move_left(ur5, 'Thunder', 2)
+    move_left(ur5, 'Lightning', 2)
+    move_right(ur5, 'Thunder', 2)
+    move_right(ur5, 'Lightning', 2)
+
+    move_front(ur5, 'Thunder', 2)
+    move_front(ur5, 'Lightning', 2)
+    move_back(ur5, 'Thunder', 2)
+    move_back(ur5, 'Lightning', 2)
+    
 
 
 
