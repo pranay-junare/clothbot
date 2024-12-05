@@ -300,6 +300,7 @@ class UR5:
 
         # Startup Button Presses: -------------------------------------------------------------------------------------------------
         # for arm in ["Lightning"]:
+        
         for arm in ["Thunder", "Lightning"]:
             print(f"\tStarting {arm}")
             root.update()

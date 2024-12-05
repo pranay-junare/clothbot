@@ -13,6 +13,14 @@ home_angles = {}
 home_angles['Thunder'] = [-180, -130, 130, -180, -90, 0]
 home_angles['Lightning'] = [-180, -50, -130, -0, 90, +0]
 
+# Define Parameters to Control Arms
+ARM_JOINT_VELOCITY = 0.5
+ARM_ACCELERATION = 0.05
+ARM_VELOCITY = 0.25
+ARM_TIME = 0
+ARMS_STEPS = 5
+ARM_STEP_DISTANCE = 0.01
+
 
 # Define a Function to Convert Angles into Radians
 def convert_into_radians(angles):
@@ -27,7 +35,7 @@ def come_home_position(ur5):
     for arm in arms:
 
         # Goto Home position
-        ur5.URs.moveJ(arm, (convert_into_radians(home_angles[arm]), 0.5, 0.5))
+        ur5.URs.moveJ(arm, (convert_into_radians(home_angles[arm]), ARM_JOINT_VELOCITY, ARM_JOINT_VELOCITY))
         
         # Open Gripper
         ur5.URs.get_gripper(arm).set(3)
@@ -62,20 +70,24 @@ def update_pose(pose, offset):
     return pose
 
 
-# Define a Function to Grasp at a given Location for all Arms
-def arms_grasp(ur5, poses, offsets):
+# Define a Function to Grasp for all Arms
+def arms_grasp(ur5):
 
     # For every Arm
     for arm in arms:
-
-        # Update Pose with Offsets
-        poses[arm] = update_pose(poses[arm], offsets[arm])
-
-        # Move Arms to Final Pose
-        ur5.URs.moveL(arm, (poses[arm], 0.02, 0.05, 0))
         
         # Close Gripper
         ur5.URs.get_gripper(arm).set(255)
+
+
+# Define a Function to Unrasp for all Arms
+def arms_ungrasp(ur5):
+
+    # For every Arm
+    for arm in arms:
+        
+        # Close Gripper
+        ur5.URs.get_gripper(arm).set(5)
 
 
 # Define a Function to Move Arm along X-axis
@@ -86,12 +98,12 @@ def move_along_x(ur5, arm, distance, direction):
     
     # Update the Pose according to Direction
     if direction == "down":
-        pose[0] += (distance * 0.01)
+        pose[0] += (distance * ARM_STEP_DISTANCE)
     else:
-        pose[0] -= (distance * 0.01)
+        pose[0] -= (distance * ARM_STEP_DISTANCE)
     
     # Move the Arm
-    ur5.URs.moveL(arm, (pose, 0.02, 0.05, 0))
+    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY, ARM_TIME))
 
 
 # Define a Function to Move Arm along Y-axis
@@ -102,12 +114,12 @@ def move_along_y(ur5, arm, distance, direction):
     
     # Update the Pose according to Direction
     if direction == "left":
-        pose[1] += (distance * 0.01)
+        pose[1] += (distance * ARM_STEP_DISTANCE)
     else:
-        pose[1] -= (distance * 0.01)
+        pose[1] -= (distance * ARM_STEP_DISTANCE)
     
     # Move the Arm
-    ur5.URs.moveL(arm, (pose, 0.02, 0.05, 0))
+    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY, ARM_TIME))
 
 
 # Define a Function to Move Arm along Z-axis
@@ -118,12 +130,12 @@ def move_along_z(ur5, arm, distance, direction):
     
     # Update the Pose according to Direction
     if direction == "front":
-        pose[2] += (distance * 0.01)
+        pose[2] += (distance * ARM_STEP_DISTANCE)
     else:
-        pose[2] -= (distance * 0.01)
+        pose[2] -= (distance * ARM_STEP_DISTANCE)
     
     # Move the Arm
-    ur5.URs.moveL(arm, (pose, 0.02, 0.05, 0))
+    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY, ARM_TIME))
 
 
 # Define a Function to Move Arm Front
@@ -175,7 +187,37 @@ def move_down(ur5, arm, distance):
         distance = -distance
     move_along_x(ur5, arm, distance, "down")
 
-  
+
+# Define a Function to Move Arm full Down
+def move_full_down(ur5, arm):
+    
+    # Get the Current Pose
+    pose = ur5.URs.get_receive(arm).getActualTCPPose()
+    
+    # Update the Pose according to Direction
+    if arm == "Lightning":
+        pose[0] = -0.425
+    else:
+        pose[0] = 0.435
+    
+    # Move the Arm
+    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY, ARM_TIME))
+
+
+# Define a Function to Move Both Arms Up
+def move_both_up(ur5, distance):
+
+    # Calculate Number of Steps to cover the Distance
+    num_steps = distance // ARMS_STEPS
+
+    # For every Step
+    for i in range(num_steps):
+
+        # Move Arms Up by 2cm
+        move_up(ur5, "Thunder", ARMS_STEPS)
+        move_up(ur5, "Lightning", ARMS_STEPS)
+
+
 
 # Define the Main Function
 def main():
@@ -184,24 +226,16 @@ def main():
     ur5 = UR5()
 
     # Come to Home Position
-    #print("Setting Home Position")
-    #come_home_position(ur5)
-    move_up(ur5, 'Thunder', 2)
-    move_up(ur5, 'Lightning', 2)
-    move_down(ur5, 'Thunder', 2)
-    move_down(ur5, 'Lightning', 2)
+    print("Setting Home Position")
+    come_home_position(ur5)
 
-    move_left(ur5, 'Thunder', 2)
-    move_left(ur5, 'Lightning', 2)
-    move_right(ur5, 'Thunder', 2)
-    move_right(ur5, 'Lightning', 2)
+    # Move Arms full Down to Grasp the Cloth
+    move_full_down(ur5, "Thunder")
+    move_full_down(ur5, "Lightning")
+    arms_grasp(ur5)
 
-    move_front(ur5, 'Thunder', 2)
-    move_front(ur5, 'Lightning', 2)
-    move_back(ur5, 'Thunder', 2)
-    move_back(ur5, 'Lightning', 2)
-    
-
+    # Move Both Arms up to Lift Cloth
+    move_both_up(ur5, 40)
 
 
 # Invoke Main Function
