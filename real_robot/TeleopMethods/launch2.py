@@ -10,10 +10,8 @@ from UR.arms import *
 from run import *
 from tk_functions import *
 
-
 import rospy
 from std_msgs.msg import Float32MultiArray, String, Bool, Float32, Int32
-
 
 class UR5:
     def __init__(self):
@@ -27,7 +25,6 @@ class UR5:
         arms = ["Thunder", "Lightning"]
         ips = [thunder_ip, lightning_ip]
         enable_control = {
-            # "Thunder": False,
             "Thunder": True,
             "Lightning": True,
         }
@@ -298,8 +295,6 @@ class UR5:
             ros_data['grasp_offsets'] = data.data
         rospy.Subscriber("/Force/grasp_offsets", Float32MultiArray, grasp_offsets_data)
 
-        # Startup Button Presses: -------------------------------------------------------------------------------------------------
-        # for arm in ["Lightning"]:
         
         for arm in ["Thunder", "Lightning"]:
             print(f"\tStarting {arm}")
@@ -310,9 +305,7 @@ class UR5:
             fields[arm]['db_reset'].invoke()
             time.sleep(1)
 
-
         print("\tStarting Main Loop")
-
         try:
             root.update()
             time.sleep(0.01)
