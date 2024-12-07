@@ -188,36 +188,6 @@ def move_down(ur5, arm, distance):
     move_along_x(ur5, arm, distance, "down")
 
 
-# Define a Function to Move Arm full Down
-def move_full_down(ur5, arm):
-    
-    # Get the Current Pose
-    pose = ur5.URs.get_receive(arm).getActualTCPPose()
-    
-    # Update the Pose according to Direction
-    if arm == "Lightning":
-        pose[0] = -0.425
-    else:
-        pose[0] = 0.435
-    
-    # Move the Arm
-    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY, ARM_TIME))
-
-
-# Define a Function to Move Both Arms Up
-def move_both_up(ur5, distance):
-
-    # Calculate Number of Steps to cover the Distance
-    num_steps = distance // ARM_STEP_DISTANCE
-
-    # For every Step
-    for i in range(num_steps):
-
-        # Move Arms Up by 2cm
-        move_up(ur5, "Thunder", ARM_STEP_DISTANCE)
-        move_up(ur5, "Lightning", ARM_STEP_DISTANCE)
-
-
 # Define a Function to Fling Arms
 def fling(ur5):
 
@@ -253,12 +223,12 @@ def main():
     come_home_position(ur5)
 
     # Move Arms full Down to Grasp the Cloth
-    move_full_down(ur5, "Thunder")
-    move_full_down(ur5, "Lightning")
+    move_down(ur5, "Thunder", 20)
+    move_down(ur5, "Lightning", 20)
     arms_grasp(ur5)
 
     # Move Both Arms up to Lift Cloth
-    move_both_up(ur5, 40)
+    move_both_up(ur5, 30)
     
     # Fling the Arms
     fling(ur5)
