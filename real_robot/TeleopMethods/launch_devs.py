@@ -48,7 +48,7 @@ def StartModules(Spark_devs, SM_devs, VR_devs, haptic_devs):
     rospy.init_node('Main', anonymous=True)
 
     modules.append(subprocess.Popen(['python3', 'Force/ForceNode.py'], start_new_session=True))
-    # modules.append(subprocess.Popen(['python3', 'realsense/realsense.py', '/both/front/'], start_new_session=True))
+    modules.append(subprocess.Popen(['python3', 'realsense/realsense.py', '/both/front/'], start_new_session=True))
     modules.append(subprocess.Popen(['python3', 'realsense/realsense.py', '/both/top/'], start_new_session=True))
     # modules.append(subprocess.Popen(['python3', 'realsense/realsense.py', '/lightning/wrist/'], start_new_session=True))
     # modules.append(subprocess.Popen(['python3', 'realsense/realsense.py', '/thunder/wrist/'], start_new_session=True))

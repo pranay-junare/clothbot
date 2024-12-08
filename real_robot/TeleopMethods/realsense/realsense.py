@@ -32,7 +32,7 @@ try:
             'depth': None
         },
         '/both/front/': {
-            'serial': 'f1371786',
+            'serial': 'f1371564',
             'hz': 5,
             # 'RGB': (1024, 768, rs.format.rgb8, 30),
             # 'depth': (1024, 768, rs.format.z16, 30)
