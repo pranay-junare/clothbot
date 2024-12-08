@@ -1,13 +1,18 @@
 import pyrealsense2 as rs
 import cv2
 import numpy as np
-HARDWARE_RESET = False
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--reset', action='store_true', help='Hardware Reset')
+args = parser.parse_args()
+HARDWARE_RESET = args.reset
+print("HARDWARE_RESET: ", HARDWARE_RESET)
 
 def stream_realsense_cameras():
     try:
         # Create a context object to manage connections to RealSense devices
         context = rs.context()
-
 
         # Query all connected RealSense devices
         devices = context.query_devices()
@@ -15,13 +20,10 @@ def stream_realsense_cameras():
         if HARDWARE_RESET == True:
             for device in devices:
                 device.hardware_reset()
-
         device_count = len(devices)
-
         if device_count == 0:
             print("No RealSense cameras detected.")
             return
-
         print(f"Number of RealSense cameras detected: {device_count}")
 
         # Initialize pipelines for each connected device
