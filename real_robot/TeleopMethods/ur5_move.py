@@ -197,7 +197,7 @@ def move_down(ur5, arm, distance):
 def move_arms_down_and_grasp(ur5, distance):
 
     # Move Arms Down and Grasp
-    print("Reaching Cloth to Grasp")
+    print("Moving Arms Down to Grasp")
     move_down(ur5, "Thunder", distance)
     move_down(ur5, "Lightning", distance)
     time.sleep(distance/ARM_WAIT_TIME_FACTOR)
@@ -208,7 +208,7 @@ def move_arms_down_and_grasp(ur5, distance):
 def move_arms_up_to_lift(ur5, distance):
 
     # Move Arms Up to Lift
-    print("Lifting Cloth to Fling")
+    print("Moving Arms Up to Lift")
     move_up(ur5, "Thunder", distance)
     move_up(ur5, "Lightning", distance)    
     time.sleep(distance/ARM_WAIT_TIME_FACTOR)
