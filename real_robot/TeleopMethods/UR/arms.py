@@ -68,7 +68,7 @@ class UR:
         if self.mode[name] != 'moveL':
             self.stop(name)
             self.mode[name] = 'moveL'
-        self.ur_control[name].moveL(perams[0], perams[1], perams[2], perams[3], True)
+        self.ur_control[name].moveL(perams[0], perams[1], perams[2], True)
 
     def forceMode(self, name, perams):
         if self.mode[name] != 'forceMode':

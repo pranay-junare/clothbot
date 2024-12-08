@@ -3,6 +3,7 @@
 # Import Launch2 Script to Re-run launch.py for Initialisation
 from launch2 import UR5
 import numpy as np
+import time
 
 
 # Define Arms
@@ -17,9 +18,8 @@ home_angles['Lightning'] = [-180, -50, -130, -0, 90, +0]
 ARM_JOINT_VELOCITY = 0.5
 ARM_ACCELERATION = 0.05
 ARM_VELOCITY = 0.25
-ARM_TIME = 0
 ARM_STEP = 0.01
-ARM_STEP_DISTANCE = 5
+ARM_WAIT_TIME_FACTOR = 2.5
 
 
 # Define a Function to Convert Angles into Radians
@@ -32,6 +32,7 @@ def convert_into_radians(angles):
 def come_home_position(ur5):
     
     # For every Arm
+    print("Setting Home Position")
     for arm in arms:
 
         # Goto Home position
@@ -39,6 +40,9 @@ def come_home_position(ur5):
         
         # Open Gripper
         ur5.URs.get_gripper(arm).set(3)
+    
+    # Wait 5 seconds for Arms to Reach Home Position
+    time.sleep(5)
 
 
 # Define a Function to Get Arms Poses wrt Base Frame
@@ -78,6 +82,7 @@ def arms_grasp(ur5):
         
         # Close Gripper
         ur5.URs.get_gripper(arm).set(255)
+    time.sleep(2)
 
 
 # Define a Function to Unrasp for all Arms
@@ -103,7 +108,7 @@ def move_along_x(ur5, arm, distance, direction):
         pose[0] -= (distance * ARM_STEP)
     
     # Move the Arm
-    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY, ARM_TIME))
+    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY))
 
 
 # Define a Function to Move Arm along Y-axis
@@ -119,7 +124,7 @@ def move_along_y(ur5, arm, distance, direction):
         pose[1] -= (distance * ARM_STEP)
     
     # Move the Arm
-    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY, ARM_TIME))
+    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY))
 
 
 # Define a Function to Move Arm along Z-axis
@@ -135,7 +140,7 @@ def move_along_z(ur5, arm, distance, direction):
         pose[2] -= (distance * ARM_STEP)
     
     # Move the Arm
-    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY, ARM_TIME))
+    ur5.URs.moveL(arm, (pose, ARM_ACCELERATION, ARM_VELOCITY))
 
 
 # Define a Function to Move Arm Front
@@ -188,6 +193,27 @@ def move_down(ur5, arm, distance):
     move_along_x(ur5, arm, distance, "down")
 
 
+# Define a Function to Move Arms Down and Grasp
+def move_arms_down_and_grasp(ur5, distance):
+
+    # Move Arms Down and Grasp
+    print("Reaching Cloth to Grasp")
+    move_down(ur5, "Thunder", distance)
+    move_down(ur5, "Lightning", distance)
+    time.sleep(distance/ARM_WAIT_TIME_FACTOR)
+    arms_grasp(ur5)
+
+
+# Define a Function to Move Arms Up to Lift
+def move_arms_up_to_lift(ur5, distance):
+
+    # Move Arms Up to Lift
+    print("Lifting Cloth to Fling")
+    move_up(ur5, "Thunder", distance)
+    move_up(ur5, "Lightning", distance)    
+    time.sleep(distance/ARM_WAIT_TIME_FACTOR)
+
+
 # Define a Function to Fling Arms
 def fling(ur5):
 
@@ -208,7 +234,7 @@ def fling(ur5):
             pose[5] -= 0.1
 
         # Move the Arm
-        ur5.URs.moveL(arm, (pose, 0.75, 0.75, ARM_TIME))
+        ur5.URs.moveL(arm, (pose, 0.75, 0.75))
 
 
 
@@ -219,20 +245,17 @@ def main():
     ur5 = UR5()
 
     # Come to Home Position
-    print("Setting Home Position")
     come_home_position(ur5)
 
-    # Move Arms full Down to Grasp the Cloth
-    move_down(ur5, "Thunder", 20)
-    move_down(ur5, "Lightning", 20)
-    arms_grasp(ur5)
-
+    # Move Both Arms down to Grasp Cloth
+    move_arms_down_and_grasp(ur5, distance = 21)
+    
     # Move Both Arms up to Lift Cloth
-    move_both_up(ur5, 30)
+    move_arms_up_to_lift(ur5, distance = 30)
     
     # Fling the Arms
-    fling(ur5)
-
+    #fling(ur5)
+    
 
 # Invoke Main Function
 if __name__ == '__main__':

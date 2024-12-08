@@ -127,7 +127,7 @@ class UR5:
                 if arm in freedrive:
                     print(arm + ": End Free Drive")
                     fields[arm]['freedrive'].config(background=col[arm])
-                    URs.freeDrive(arm, False)
+                    self.URs.freeDrive(arm, False)
                     del freedrive[arm]
                 print(arm + ": Run " + mode)
                 if control_modes[arm] == mode:
@@ -304,6 +304,7 @@ class UR5:
             root.update()
             fields[arm]['db_reset'].invoke()
             time.sleep(1)
+            
 
         print("\tStarting Main Loop")
         try:
@@ -313,3 +314,4 @@ class UR5:
         except tk.TclError:
             print("Window closed")
             pass
+        
