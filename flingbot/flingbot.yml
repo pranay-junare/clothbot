@@ -15,8 +15,10 @@ dependencies:
   - pip
   - pybind11
   - python=3.8
+  - pandas=1.5.3
   - scikit-image
   - seaborn
+  - tensorboard
   - pip:
     - h5py
     - numpy-quaternion

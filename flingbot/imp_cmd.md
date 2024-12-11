@@ -11,7 +11,7 @@ $ docker build -t flingbot .
 
 
 4) $ export FLINGBOT_PATH=${PWD}
- $ docker run -v $FLINGBOT_PATH:/workspace/flingbot -v /home/hong_data/miniforge3:/home/hong_data/miniforge3 --runtime=nvidia --gpus all --shm-size=30gb  -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 -it flingbot 
+ $ docker run -v $FLINGBOT_PATH:/workspace/flingbot -v /home/hong_data/miniforge3:/home/hong_data/miniforge3 --runtime=nvidia --gpus all --shm-size=24gb  -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 -it flingbot 
 
 5) In docker container:
 		a. # export PATH=/home/hong_data/miniforge3/bin:$PATH

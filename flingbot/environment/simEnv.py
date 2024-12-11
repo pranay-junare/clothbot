@@ -559,6 +559,7 @@ class SimEnv:
         raise NotImplementedError()
 
     def get_max_value_valid_action(self, value_maps) -> dict:
+        # print(value_maps)
         stacked_value_maps = torch.stack(tuple(value_maps.values()))
 
         # (**) filter out points too close to edge

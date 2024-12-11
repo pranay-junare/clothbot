@@ -136,3 +136,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# additional
+flingbot_eval_*
+flingbot-train-from-scratch
+flingbot-train-from-scratch-partial

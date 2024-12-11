@@ -483,7 +483,8 @@ if __name__ == "__main__":
     parser.add_argument("--strict_min_edge_length", type=int, default=64)
     parser.add_argument("--max_cloth_size", type=int, default=104)
     args = parser.parse_args()
-    ray.init(log_to_driver=True, local_mode=True)
+    # ray.init(log_to_driver=True, local_mode=True) # for debugging locally
+    ray.init() # og
     helper_fn = ray.remote(generate_tasks_helper).options(
         num_gpus=torch.cuda.device_count()/args.num_processes)
     

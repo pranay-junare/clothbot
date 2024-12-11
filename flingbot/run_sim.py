@@ -36,7 +36,8 @@ def optimize(value_net_key, value_net, optimizer, loader,
 
 if __name__ == '__main__':
     args = config_parser().parse_args()
-    ray.init(log_to_driver=True, local_mode=True)
+    # ray.init(log_to_driver=True, local_mode=True) # for debugging: local_mode runs in same process
+    ray.init(log_to_driver=False) # og
     seed_all(args.seed)
     policy, optimizer, dataset_path = setup_network(args)
     criterion = torch.nn.functional.mse_loss
@@ -49,6 +50,8 @@ if __name__ == '__main__':
     remaining_observations = []
     ready_envs = copy(envs)
     dataset_size = get_dataset_size(dataset_path)
+    print("Dataset size: ", dataset_size)
+    print("observations ", observations[0].shape)
     i = dataset_size
     while(True):
         with torch.no_grad():
