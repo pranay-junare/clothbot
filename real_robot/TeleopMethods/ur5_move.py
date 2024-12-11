@@ -1,6 +1,7 @@
 #! /bin/env python3
 
 # Import Launch2 Script to Re-run launch.py for Initialisation
+import image2real
 from launch2 import UR5
 import numpy as np
 import time
@@ -12,10 +13,17 @@ arms = ['Thunder', 'Lightning']
 
 # Set Home Position for Arms
 home_angles = {}
-#home_angles['Thunder'] = [-180, -130, 130, -180, -90, 0]
-#home_angles['Lightning'] = [-180, -50, -130, -0, 90, +0]
 home_angles['Thunder'] = [-180, -130, 130, -180, -90, 0]
 home_angles['Lightning'] = [-180, -50, -130, -0, 90, +0]
+
+# Define the Poses of Arms at Origin wrt Base
+pose_at_origin_wrt_base = {}
+pose_at_origin_wrt_base['Thunder'] = [0.4287960632960006, 0.3725351444832463, 0.5076178275754467, -1.2096211591369221, 1.2086797731034713, -1.2153842149816727]
+pose_at_origin_wrt_base['Lightning'] = [-0.4289481861070213, 0.3726487357833324, 0.49861378937777756, -1.2036593360758385, -1.211274018116346, 1.2073764623980814]
+
+# Define the Origin wrt Camera frame
+origin_wrt_camera = [0.05, -0.03, 1.2]
+
 
 # Define Parameters to Control Arms
 ARM_JOINT_ANGULAR_VELOCITY = 0.5
@@ -80,16 +88,46 @@ def get_arms_poses(ur5):
 
 
 # Define a Function to Update Poses for given Arm
-def update_pose(pose, offset):
+def update_pose(pose, offset, op):
     
     # For every value in Pose
     for i in range(len(pose)):
 
         # Update Pose with that Corresponding Offset
-        pose[i] += offset[i]
+        if op == "add":
+            pose[i] += offset[i]
+        else:
+            pose[i] -= offset[i]
 
     # Return Pose
     return pose
+
+
+# Define a Function to get World Position wrt to Camera
+def get_world_position_wrt_camera(ur5):
+
+    # Initialise Empty Dictionary to store World Position wrt Camera
+    world_position_wrt_camera = {}
+    world_position_wrt_origin = {}
+
+    # For every Arm
+    for arm in arms:
+
+        # Store the World Position of Arm wrt Origin
+        world_position_wrt_origin[arm] = update_pose(get_arms_poses(ur5)[arm], pose_at_origin_wrt_base[arm], op = "diff")
+        if arm == "Lightning":
+            world_position_wrt_origin[arm][0] *= -1
+            world_position_wrt_origin[arm][1] *= -1
+
+        # Do Coordinate Transformation
+        temp = world_position_wrt_origin[arm]
+        world_position_wrt_origin[arm] = [-temp[1], -temp[2], temp[0]]
+
+        # Add Origin wrt Camera to get World Position wrt Camera
+        world_position_wrt_camera[arm] = update_pose(world_position_wrt_origin[arm], origin_wrt_camera, op = "add")
+    
+    # Return World Position
+    return world_position_wrt_camera
 
 
 # Define a Function to Grasp for all Arms
@@ -331,10 +369,9 @@ def fling_action_3(ur5, distance, arm_linear_acceleration, arm_linear_velocity):
 
 # Define a Function to Fling Arms
 def fling(ur5, swing, front, drag):
-
-    print("Flinging the Cloth")
     
     # Perform Fling action 1
+    print("Flinging the Cloth")
     fling_action_1(ur5, get_joint_angles(ur5), swing, arm_joint_angular_velocity = 3)
 
     # Move Arms Front
@@ -358,9 +395,11 @@ def main():
 
     # Create ur5 Object to Control Arms
     ur5 = UR5()
-
+    
     # Come to Home Position
     come_home_position(ur5)
+
+    '''
 
     # Move Both Arms down to Grasp Cloth
     move_arms_down_and_grasp(ur5, distance = 21, arm_linear_acceleration = 0.2, arm_linear_velocity = 0.5)
@@ -370,6 +409,16 @@ def main():
     
     # Fling the Arms
     fling(ur5, swing = 15, front = 10, drag = 25)
+    '''
+
+    ur5.URs.moveL('Thunder', (pose_at_origin_wrt_base['Thunder'], 0.1, 0.1))
+    time.sleep(5)
+    come_home_position(ur5)
+
+    ur5.URs.moveL('Lightning', (pose_at_origin_wrt_base['Lightning'], 0.1, 0.1))
+    time.sleep(5)
+    come_home_position(ur5)
+    
         
 
 # Invoke Main Function

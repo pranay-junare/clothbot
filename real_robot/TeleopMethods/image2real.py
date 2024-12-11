@@ -29,7 +29,7 @@ def pixel_to_real_world_and_annotate(u, v):
         cx = depth_intrinsics.ppx  # Principal point x (optical center)
         cy = depth_intrinsics.ppy  # Principal point y (optical center)
 
-        print(f"Camera Intrinsics: fx={fx}, fy={fy}, cx={cx}, cy={cy}")
+        #print(f"Camera Intrinsics: fx={fx}, fy={fy}, cx={cx}, cy={cy}")
 
         # Get the depth at pixel (u, v)
         depth = depth_frame.get_distance(u, v)
@@ -37,35 +37,36 @@ def pixel_to_real_world_and_annotate(u, v):
             print(f"No valid depth at pixel ({u}, {v}).")
             return
 
-        print(f"Depth at pixel ({u}, {v}): {depth} meters")
+        #print(f"Depth at pixel ({u}, {v}): {depth} meters")
 
         # Convert to real-world coordinates (X, Y, Z)
-        X = (u - cx) * depth / fx
-        Y = (v - cy) * depth / fy
-        Z = depth
+        X = round((u - cx) * depth / fx, 2)
+        Y = round((v - cy) * depth / fy, 2)
+        Z = round(depth, 2)
 
-        print(f"Real-world coordinates: X={X:.2f}, Y={Y:.2f}, Z={Z:.2f} meters")
+        #print(f"Real-world coordinates: X={X:.2f}, Y={Y:.2f}, Z={Z:.2f} meters")
 
         # Convert the color frame to a numpy array (OpenCV format)
-        color_image = np.asanyarray(color_frame.get_data())
+        #color_image = np.asanyarray(color_frame.get_data())
 
         # Annotate the point (u, v) on the color image
         # Draw a red circle at the specified (u, v)
-        cv2.circle(color_image, (u, v), 5, (0, 0, 255), -1)  # Red circle
-        cv2.putText(color_image, f"Point ({u}, {v})", (u + 10, v - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        #cv2.circle(color_image, (u, v), 5, (0, 0, 255), -1)  # Red circle
+        #cv2.putText(color_image, f"Point ({u}, {v})", (u + 10, v - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
         # Annotate the origin (cx, cy) on the color image
         # Draw a green circle at the origin (optical center)
-        cv2.circle(color_image, (int(cx), int(cy)), 10, (0, 255, 0), -1)  # Green circle for the origin
-        cv2.putText(color_image, "Origin", (int(cx) + 10, int(cy) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        #cv2.circle(color_image, (int(cx), int(cy)), 5, (0, 255, 0), -1)  # Green circle for the origin
+        #cv2.putText(color_image, "Origin", (int(cx) + 10, int(cy) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         # Display the image with the annotated point and origin
-        cv2.imshow("Annotated Image", color_image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        #cv2.imshow("Annotated Image", color_image)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
 
         # Stop the pipeline
         pipeline.stop()
+        return [X, Y, Z]
 
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -75,5 +76,5 @@ if __name__ == "__main__":
     u = 320  # x-coordinate in image space (center of 640x480 image)
     v = 240  # y-coordinate in image space (center of 640x480 image)
 
-    pixel_to_real_world_and_annotate(u, v)
+    [x, y, z] = pixel_to_real_world_and_annotate(u, v)
 
