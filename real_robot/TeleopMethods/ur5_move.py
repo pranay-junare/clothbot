@@ -1,7 +1,6 @@
 #! /bin/env python3
 
 # Import Launch2 Script to Re-run launch.py for Initialisation
-import image2real
 from launch2 import UR5
 import numpy as np
 import time
@@ -23,6 +22,11 @@ pose_at_origin_wrt_base['Lightning'] = [-0.4289481861070213, 0.3726487357833324,
 
 # Define the Origin wrt Camera frame
 origin_wrt_camera = [0.05, -0.03, 1.2]
+camera_origin = [320, 240]
+
+# Define the Camera Intrinsics
+camera_intrinsics = {'fx': 461.16796875, 'fy': 460.5, 'cx': 299.328125, 'cy': 251.37109375}
+depth = 1.2
 
 
 # Define Parameters to Control Arms
@@ -90,17 +94,44 @@ def get_arms_poses(ur5):
 # Define a Function to Update Poses for given Arm
 def update_pose(pose, offset, op):
     
+    # Initialise List to store New Pose
+    new_pose = pose
+    
     # For every value in Pose
     for i in range(len(pose)):
 
         # Update Pose with that Corresponding Offset
         if op == "add":
-            pose[i] += offset[i]
+            new_pose[i] = pose[i] + offset[i]
         else:
-            pose[i] -= offset[i]
+            new_pose[i] = pose[i] - offset[i]
 
     # Return Pose
-    return pose
+    return new_pose
+
+
+# Convert to real-world coordinates (X, Y)
+def camera_to_world(pixel_coordinates):
+    u, v = pixel_coordinates
+    X = round((u - camera_intrinsics['cx']) * depth / camera_intrinsics['fx'], 2)
+    Y = round((v - camera_intrinsics['cy']) * depth / camera_intrinsics['fy'], 2)
+    return [X,Y]
+
+
+# Define a Function to get the Arms Position wrt to Origin
+def get_arms_positions_wrt_origin(ur5):
+
+    # Initialise Empty Dictionary to store Arm Position wrt Origin
+    arm_position_wrt_origin = {}
+
+    # For every Arm
+    for arm in arms:
+
+        # Store the Arm Position wrt Origin
+        arm_position_wrt_origin[arm] = update_pose(get_arms_poses(ur5)[arm], pose_at_origin_wrt_base[arm], op = "diff")[:2]
+    
+    # Return World Position
+    return arm_position_wrt_origin
 
 
 # Define a Function to get World Position wrt to Camera
@@ -128,6 +159,27 @@ def get_world_position_wrt_camera(ur5):
     
     # Return World Position
     return world_position_wrt_camera
+
+
+# Define a Function to move Arms to Pixel Coordinates
+def move_arms_to_pixel_coordinates(ur5, pixel_coordinates):
+
+    # Get the Required World Position wrt Camera
+    required_world_position_wrt_camera = camera_to_world(pixel_coordinates)
+
+    # Get the Required World Position wrt Origin
+    required_world_position_wrt_origin = update_pose(required_world_position_wrt_camera, origin_wrt_camera, op = "diff")
+    
+    # Get the Arms Position wrt Origin
+    arms_position_wrt_origin = get_arms_positions_wrt_origin(ur5)
+
+    # Get the Required Offset
+    offset = update_pose(required_world_position_wrt_origin, arms_position_wrt_origin['Thunder'], op = "diff")
+    
+    h1 = get_world_position_wrt_camera(ur5)['Thunder'][2]
+    h = depth - h1
+
+    print(offset, h)
 
 
 # Define a Function to Grasp for all Arms
