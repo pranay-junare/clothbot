@@ -15,6 +15,12 @@ home_angles = {}
 home_angles['Thunder'] = [-180, -130, 130, -180, -90, 0]
 home_angles['Lightning'] = [-180, -50, -130, -0, 90, +0]
 
+# Set Custom Home Position for Arms
+custom_home_angles = {}
+custom_home_angles['Thunder'] = [-160.42516460340738, -129.96195150672278, 76.70328756889732, -179.97453638328042, -90.01844082751371, -0.009524926168668738]
+custom_home_angles['Lightning'] = [-196.7935723486508, -49.557770332283646, -74.15220827143189, 0.025513249276600564, 89.99978393842473, 0.003288053024755972]
+
+
 # Define Parameters to Control Arms
 ARM_JOINT_ANGULAR_VELOCITY = 0.5
 ARM_LINEAR_ACCELERATION = 0.1
@@ -34,13 +40,31 @@ def wait_time(distance, speed, time_factor):
 
 # Define a Function to Convert Angles into Radians
 def convert_into_radians(angles):
-    radians = [angle/180 * np.pi for angle in angles]
+    
+    # Intialise Empty List to store Radians
+    radians = []
+
+    # For every Angle
+    for i in range(len(angles)):
+        radian = angles[i] * np.pi / 180
+        radians.append(radian)
+    
+    # Return Radians
     return radians
 
 
 # Define a Function to Convert Radians into Angles
 def convert_into_angles(radians):
-    angles = [radian/np.pi * 180 for radian in radians]
+    
+    # Intialise Empty List to store Angles
+    angles = []
+
+    # For every Radian
+    for i in range(len(radians)):
+        angle = radians[i] * 180 / np.pi
+        angles.append(angle)
+    
+    # Return Radians
     return angles
 
 
@@ -53,6 +77,23 @@ def come_home_position(ur5):
 
         # Goto Home position
         ur5.URs.moveJ(arm, (convert_into_radians(home_angles[arm]), ARM_JOINT_ANGULAR_VELOCITY, ARM_JOINT_ANGULAR_VELOCITY))
+
+    # Open Gripper
+    ur5.URs.get_gripper(arm).set(3)
+    
+    # Wait 5 seconds for Arms to Reach Home Position
+    time.sleep(5)
+
+
+# Define a Function to Set Arms to Custom Home Position
+def come_custom_home_position(ur5):
+    
+    # For every Arm
+    print("Setting Custom Home Position")
+    for arm in arms:
+
+        # Goto Custom Home position
+        ur5.URs.moveJ(arm, (convert_into_radians(custom_home_angles[arm]), ARM_JOINT_ANGULAR_VELOCITY, ARM_JOINT_ANGULAR_VELOCITY))
 
     # Open Gripper
     ur5.URs.get_gripper(arm).set(3)
@@ -80,17 +121,11 @@ def get_arms_poses(ur5):
 # Define a Function to Update Poses for given Arm
 def update_pose(pose, offset, op):
     
-    # Initialise List to store New Pose
-    new_pose = pose
-    
-    # For every value in Pose
-    for i in range(len(pose)):
-
-        # Update Pose with that Corresponding Offset
-        if op == "add":
-            new_pose[i] = pose[i] + offset[i]
-        else:
-            new_pose[i] = pose[i] - offset[i]
+    # If Operation is Addition
+    if op == 'add':
+        new_pose = np.add(pose, offset)
+    else:
+        new_pose = np.subtract(pose, offset)
 
     # Return Pose
     return new_pose
@@ -262,17 +297,18 @@ def move_arms_up_to_lift(ur5, distance, arm_linear_acceleration, arm_linear_velo
 def get_joint_angles(ur5):
 
     # Initialise Empty Dictionary to store Joint Angles
-    joint_angles = {}
+    joint_angles_rad = {}
+    joint_angles_ang = {}
 
     # For every Arm
     for arm in arms:
 
         # Read the Joint Angles and Convert them into Degrees
-        joint_angles[arm] = ur5.URs.get_Q(arm)
-        joint_angles[arm] = convert_into_angles(joint_angles[arm])
+        joint_angles_rad[arm] = ur5.URs.get_Q(arm)
+        joint_angles_ang[arm] = convert_into_angles(joint_angles_rad[arm])
     
     # Return Joint Angles
-    return joint_angles
+    return joint_angles_ang
 
 
 # Define a Function to Perform Fling Action 1
@@ -365,6 +401,9 @@ def main():
     # Come to Home Position
     come_home_position(ur5)
 
+    # Come to Custom Home Position
+    come_custom_home_position(ur5)
+
     '''
 
     # Move Both Arms down to Grasp Cloth
@@ -377,15 +416,6 @@ def main():
     fling(ur5, swing = 15, front = 10, drag = 25)
     '''
 
-    ur5.URs.moveL('Thunder', (pose_at_origin_wrt_base['Thunder'], 0.1, 0.1))
-    time.sleep(5)
-    come_home_position(ur5)
-
-    ur5.URs.moveL('Lightning', (pose_at_origin_wrt_base['Lightning'], 0.1, 0.1))
-    time.sleep(5)
-    come_home_position(ur5)
-    
-        
 
 # Invoke Main Function
 if __name__ == '__main__':

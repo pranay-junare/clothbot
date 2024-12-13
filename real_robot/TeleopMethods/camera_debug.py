@@ -60,6 +60,8 @@ def stream_realsense_cameras():
             # Display the frames
             for window_name, frame in frames:
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                cv2.circle(frame, (216, 168), 5, (0, 0, 255), -1)
+                cv2.circle(frame, (396, 162), 5, (0, 0, 255), -1)
                 cv2.imshow(window_name, frame)
 
             # Break the loop on 'q' key press

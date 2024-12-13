@@ -1,6 +1,7 @@
 #! /bin/env python3
 
 # Import Launch2 Script to Re-run launch.py for Initialisation
+from launch2 import UR5
 import ur5_move
 import numpy as np
 import time
@@ -10,99 +11,162 @@ import math
 # Define Arms
 arms = ['Thunder', 'Lightning']
 
-# Define the Poses of Arms at Origin wrt Base
-pose_at_origin_wrt_base = {}
-pose_at_origin_wrt_base['Thunder'] = [0.4287960632960006, 0.3725351444832463, 0.5076178275754467, -1.2096211591369221, 1.2086797731034713, -1.2153842149816727]
-pose_at_origin_wrt_base['Lightning'] = [-0.4289481861070213, 0.3726487357833324, 0.49861378937777756, -1.2036593360758385, -1.211274018116346, 1.2073764623980814]
+# Define the Poses of Arms at Origin wrt Base Frame
+pose_at_origin_wrt_base_frame = {}
+pose_at_origin_wrt_base_frame['Thunder'] = [0.4187960632960006, 0.3725351444832463, 0.5076178275754467, -1.2096211591369221, 1.2086797731034713, -1.2153842149816727]
+pose_at_origin_wrt_base_frame['Lightning'] = [-0.4189481861070213, 0.3726487357833324, 0.49861378937777756, -1.2036593360758385, -1.211274018116346, 1.2073764623980814]
 
-# Define the Origin wrt Camera frame
-origin_wrt_camera = [0.05, -0.03, 1.2]
-camera_origin = [320, 240]
+# Define the Origin wrt Camera Frame
+camera_origin_wrt_camera_frame = [0.05, -0.03, 1.2]
 
-# Define the Camera Intrinsics
-camera_intrinsics = {'fx': 461.16796875, 'fy': 460.5, 'cx': 299.328125, 'cy': 251.37109375}
-depth = 1.2
+# Define the Camera Intrinsics Parameters
+camera_intrinsics = {'fx': 461.16796875, 'fy': 460.5, 'cx': 299.328125, 'cy': 251.37109375, 'depth': 1.2}
 
 
-# Define a Function to Convert Camera coordinates to real-world coordinates (X, Y)
-def camera_to_world(pixel_coordinates):
+# Define a Function to Convert Coordinates from Camera Frame to World Frame
+def convert_camera_frame_to_world_frame(coordinates_wrt_camera_frame):
 
-    # Get the Coordinates
-    u, v = pixel_coordinates
+    # Store Coordinates Temporarily
+    temp = coordinates_wrt_camera_frame
 
-    # Calculate the Real-world Coordinates
-    X = round((u - camera_intrinsics['cx']) * depth / camera_intrinsics['fx'], 2)
-    Y = round((v - camera_intrinsics['cy']) * depth / camera_intrinsics['fy'], 2)
+    # Update the Coordinates wrt to World Frame
+    coordinates_wrt_world_frame = [-temp[0], temp[1], -temp[2]]
 
-    # Return the 3D World Coordinates
-    return [X, Y, depth]
+    # Return the Coordinates wrt World Frame
+    return coordinates_wrt_world_frame
 
 
-# Define a Function to get the Arms Position wrt to Real world Origin
-def get_arms_positions_wrt_origin(ur5):
+# Define a Function to Convert Coordinates from Camera Frame to World Frame
+def camera_frame_to_world_frame(pixel_coordinates):
 
-    # Initialise Empty Dictionary to store Arm Position wrt Origin
-    arm_position_wrt_origin = {}
+    # Initialise the Coordinates for Arms wrt World Frame
+    coordinates_wrt_world_frame = {}
 
     # For every Arm
     for arm in arms:
 
-        # Store the Arm Position wrt Origin
-        arm_position_wrt_origin[arm] = ur5_move.update_pose(get_arms_poses(ur5)[arm], pose_at_origin_wrt_base[arm], op = "diff")[:3]
-    
-        # Store Position Temporarily
-        temp = arm_position_wrt_origin[arm]
+        # Get the Coordinates
+        u, v = pixel_coordinates[arm]
 
-        # Swap Axis from Base link from to Camera frame
-        arm_position_wrt_origin[arm] = [-temp[1], -temp[2], temp[0]]
+        # Calculate the Real-world Coordinates wrt Camera Frame
+        x = round((u - camera_intrinsics['cx']) * camera_intrinsics['depth'] / camera_intrinsics['fx'], 2)
+        y = round((v - camera_intrinsics['cy']) * camera_intrinsics['depth'] / camera_intrinsics['fy'], 2)
+        z = camera_intrinsics['depth']
+
+        # Get the Coordinates wrt Camera Frame
+        coordinates_wrt_camera_frame = ur5_move.update_pose([x, y, z], camera_origin_wrt_camera_frame, op = 'diff')
         
-    # Return World Position
-    return arm_position_wrt_origin
+        # Convert the Coordinates wrt Camera Frame to World Frame
+        coordinates_wrt_world_frame[arm] = convert_camera_frame_to_world_frame(coordinates_wrt_camera_frame)
+
+    # Return the Coordinates wrt World Frame
+    return coordinates_wrt_world_frame
 
 
-# Define a Function to get World Position wrt to Camera
-def get_world_position_wrt_camera(ur5):
+# Define a Function to Convert Coordinates from Base Frame to World Frame
+def base_frame_to_world_frame(coordinates_wrt_base_frame):
 
-    # Initialise Empty Dictionary to store World Position wrt Camera
-    world_position_wrt_camera = {}
-    world_position_wrt_origin = {}
+    # Store Coordinates Temporarily
+    temp = coordinates_wrt_base_frame
 
-    # For every Arm
+    # Update the Coordinates wrt to World Frame
+    coordinates_wrt_world_frame = [temp[1], -temp[2], -temp[0]]
+
+    # Return the Coordinates wrt World Frame
+    return coordinates_wrt_world_frame
+
+
+# Define a Function to Convert Coordinates from World Frame to Base Frame
+def world_frame_to_base_frame(coordinates_wrt_world_frame):
+
+    # Store Coordinates Temporarily
+    temp = coordinates_wrt_world_frame
+
+    # Update the Coordinates wrt to Base Frame
+    coordinates_wrt_base_frame = [-temp[2], temp[0], -temp[1]]
+
+    # Return the Coordinates wrt Base Frame
+    return coordinates_wrt_base_frame
+
+
+# Define a Function to Get the Position of Arms wrt World Frame
+def get_arms_position_wrt_world_frame(arms):
+
+    # Initialise the Position of Arms wrt World Frame
+    arms_position_wrt_world_frame = {}
+
+    # For all Arms
     for arm in arms:
 
-        # Store the World Position of Arm wrt Origin
-        world_position_wrt_origin[arm] = update_pose(get_arms_poses(ur5)[arm], pose_at_origin_wrt_base[arm], op = "diff")
+        # Get the Position of Arm wrt Base Frame
+        arm_position_wrt_base_frame = ur5.URs.get_receive(arm).getActualTCPPose()
+
+        # Get the Position of Arm wrt Base Frame
+        arm_position_from_origin_wrt_base_frame = ur5_move.update_pose(arm_position_wrt_base_frame, pose_at_origin_wrt_base_frame[arm], op = 'diff')
+
+        # Convert the Arm Position from Origin wrt Base Frame to World Frame
+        arms_position_wrt_world_frame[arm] = base_frame_to_world_frame(arm_position_from_origin_wrt_base_frame)
         if arm == "Lightning":
-            world_position_wrt_origin[arm][0] *= -1
-            world_position_wrt_origin[arm][1] *= -1
-
-        # Do Coordinate Transformation
-        temp = world_position_wrt_origin[arm]
-        world_position_wrt_origin[arm] = [-temp[1], -temp[2], temp[0]]
-
-        # Add Origin wrt Camera to get World Position wrt Camera
-        world_position_wrt_camera[arm] = update_pose(world_position_wrt_origin[arm], origin_wrt_camera, op = "add")
+            arms_position_wrt_world_frame[arm][0] *= -1
+            arms_position_wrt_world_frame[arm][2] *= -1
     
-    # Return World Position
-    return world_position_wrt_camera
+    # Return the Arms Position wrt World Frame
+    return arms_position_wrt_world_frame
+        
 
-
-# Define a Function to move Arms to Pixel Coordinates
+# Define a Function to Move the Arms to Pixel Coordinates
 def move_arms_to_pixel_coordinates(ur5, pixel_coordinates):
 
-    # Get the Required World Position wrt Camera
-    required_world_position_wrt_camera = camera_to_world(pixel_coordinates)
+    # Get the Final Position of Arms wrt World Frame
+    final_arms_position_wrt_world_frame = camera_frame_to_world_frame(pixel_coordinates)
 
-    # Get the Required World Position wrt Origin
-    required_world_position_wrt_origin = update_pose(required_world_position_wrt_camera, origin_wrt_camera, op = "diff")
+    # Get the Initial Position of Arms wrt World Frame
+    arms_position_wrt_world_frame = get_arms_position_wrt_world_frame(arms)
+
+    # Get the Displacement of Arms wrt Base Frame
+    displacement_wrt_base_frame = {}
+    for arm in arms:
+        displacement_wrt_world_frame = ur5_move.update_pose(final_arms_position_wrt_world_frame[arm], arms_position_wrt_world_frame[arm], op = 'diff')
+        displacement_wrt_base_frame[arm] = world_frame_to_base_frame(displacement_wrt_world_frame)
+        if arm == "Lightning":
+            displacement_wrt_base_frame[arm][0] *= -1
+            displacement_wrt_base_frame[arm][1] *= -1
+        for i in range(3):
+            displacement_wrt_base_frame[arm].append(0)
     
-    # Get the Arms Position wrt Origin
-    arms_position_wrt_origin = get_arms_positions_wrt_origin(ur5)
-
-    # Get the Required Offset
-    offset = update_pose(required_world_position_wrt_origin, arms_position_wrt_origin['Thunder'], op = "diff")
+    # Get the Current and Final Position of Arms wrt Base Frame
+    current_arms_position_wrt_base_frame = {}
+    final_arms_position_wrt_base_frame = {}
+    for arm in arms:
+        current_arms_position_wrt_base_frame[arm] = ur5.URs.get_receive(arm).getActualTCPPose()
+        final_arms_position_wrt_base_frame[arm] = ur5_move.update_pose(current_arms_position_wrt_base_frame[arm], displacement_wrt_base_frame[arm], op = 'add')
     
-    h1 = get_world_position_wrt_camera(ur5)['Thunder'][2]
-    h = depth - h1
+    # Move the Arms to the Desired Position
+    final_arms_position_wrt_base_frame['Lightning'][1] += 0.1
+    for arm in arms:
+        ur5.URs.moveL(arm, (final_arms_position_wrt_base_frame[arm], 0.1, 0.1))
+    time.sleep(7)
 
-    print(offset, h)
+
+
+
+# Invoke Main Function
+if __name__ == '__main__':
+    
+    ur5 = UR5()
+
+    ur5_move.come_home_position(ur5)
+
+    pixel_coordinates = {}
+    pixel_coordinates['Lightning'] = [216, 168]
+    pixel_coordinates['Thunder'] = [396, 162]
+    move_arms_to_pixel_coordinates(ur5, pixel_coordinates)  
+
+    ur5_move.arms_grasp(ur5)
+
+    # Move Both Arms up to Lift Cloth
+    ur5_move.move_arms_up_to_lift(ur5, distance = 30, arm_linear_acceleration = 0.2, arm_linear_velocity = 0.5)
+    
+    # Fling the Arms
+    ur5_move.fling(ur5, swing = 15, front = 10, drag = 25)
+
