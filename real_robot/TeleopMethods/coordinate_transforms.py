@@ -90,7 +90,7 @@ def world_frame_to_base_frame(coordinates_wrt_world_frame):
 
 
 # Define a Function to Get the Position of Arms wrt World Frame
-def get_arms_position_wrt_world_frame(arms):
+def get_arms_position_wrt_world_frame(ur5, arms):
 
     # Initialise the Position of Arms wrt World Frame
     arms_position_wrt_world_frame = {}
@@ -121,7 +121,7 @@ def move_arms_to_pixel_coordinates(ur5, pixel_coordinates):
     final_arms_position_wrt_world_frame = camera_frame_to_world_frame(pixel_coordinates)
 
     # Get the Initial Position of Arms wrt World Frame
-    arms_position_wrt_world_frame = get_arms_position_wrt_world_frame(arms)
+    arms_position_wrt_world_frame = get_arms_position_wrt_world_frame(ur5, arms)
 
     # Get the Displacement of Arms wrt Base Frame
     displacement_wrt_base_frame = {}
@@ -141,32 +141,9 @@ def move_arms_to_pixel_coordinates(ur5, pixel_coordinates):
         current_arms_position_wrt_base_frame[arm] = ur5.URs.get_receive(arm).getActualTCPPose()
         final_arms_position_wrt_base_frame[arm] = ur5_move.update_pose(current_arms_position_wrt_base_frame[arm], displacement_wrt_base_frame[arm], op = 'add')
     
-    # Move the Arms to the Desired Position
+    # Move the Arms to the Desired Position and Grasp
     final_arms_position_wrt_base_frame['Lightning'][1] += 0.1
     for arm in arms:
         ur5.URs.moveL(arm, (final_arms_position_wrt_base_frame[arm], 0.1, 0.1))
     time.sleep(7)
-
-
-
-
-# Invoke Main Function
-if __name__ == '__main__':
-    
-    ur5 = UR5()
-
-    ur5_move.come_home_position(ur5)
-
-    pixel_coordinates = {}
-    pixel_coordinates['Lightning'] = [216, 168]
-    pixel_coordinates['Thunder'] = [396, 162]
-    move_arms_to_pixel_coordinates(ur5, pixel_coordinates)  
-
-    ur5_move.arms_grasp(ur5)
-
-    # Move Both Arms up to Lift Cloth
-    ur5_move.move_arms_up_to_lift(ur5, distance = 30, arm_linear_acceleration = 0.2, arm_linear_velocity = 0.5)
-    
-    # Fling the Arms
-    ur5_move.fling(ur5, swing = 15, front = 10, drag = 25)
-
+    ur5_move.arms_grasp(ur5)  

@@ -272,17 +272,6 @@ def move_back_and_down(ur5, arm, distance, arm_linear_acceleration, arm_linear_v
     ur5.URs.moveL(arm, (pose, arm_linear_acceleration, arm_linear_velocity))
 
 
-# Define a Function to Move Arms Down and Grasp
-def move_arms_down_and_grasp(ur5, distance, arm_linear_acceleration, arm_linear_velocity):
-
-    # Move Arms Down and Grasp
-    print("Moving Arms Down to Grasp")
-    for arm in arms:
-        move_down(ur5, arm, distance, arm_linear_acceleration, arm_linear_velocity)
-    wait_time(distance, arm_linear_velocity, ARM_LINEAR_WAIT_TIME_FACTOR)
-    arms_grasp(ur5)
-
-
 # Define a Function to Move Arms Up to Lift
 def move_arms_up_to_lift(ur5, distance, arm_linear_acceleration, arm_linear_velocity):
 
@@ -389,34 +378,4 @@ def fling(ur5, swing, front, drag):
 
     # Ungasp the Cloth
     arms_ungrasp(ur5)
-    
-
-
-# Define the Main Function
-def main():
-
-    # Create ur5 Object to Control Arms
-    ur5 = UR5()
-    
-    # Come to Home Position
-    come_home_position(ur5)
-
-    # Come to Custom Home Position
-    come_custom_home_position(ur5)
-
-    '''
-
-    # Move Both Arms down to Grasp Cloth
-    move_arms_down_and_grasp(ur5, distance = 21, arm_linear_acceleration = 0.2, arm_linear_velocity = 0.5)
-    
-    # # Move Both Arms up to Lift Cloth
-    move_arms_up_to_lift(ur5, distance = 30, arm_linear_acceleration = 0.2, arm_linear_velocity = 0.5)
-    
-    # Fling the Arms
-    fling(ur5, swing = 15, front = 10, drag = 25)
-    '''
-
-
-# Invoke Main Function
-if __name__ == '__main__':
-    main()
+    time.sleep(2)
