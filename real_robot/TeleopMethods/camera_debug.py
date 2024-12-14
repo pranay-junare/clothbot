@@ -60,9 +60,13 @@ def stream_realsense_cameras():
             # Display the frames
             for window_name, frame in frames:
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-                cv2.circle(frame, (216, 168), 5, (0, 0, 255), -1)
-                cv2.circle(frame, (396, 162), 5, (0, 0, 255), -1)
                 cv2.imshow(window_name, frame)
+                
+                # Save the Images
+                if window_name == "Camera 1":
+                    cv2.imwrite("TeleopMethods/front_image.jpg", frame)
+                elif window_name == "Camera 2":
+                    cv2.imwrite("TeleopMethods/top_image.jpg", frame)
 
             # Break the loop on 'q' key press
             if cv2.waitKey(1) & 0xFF == ord('q'):

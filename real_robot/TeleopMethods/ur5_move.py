@@ -364,8 +364,8 @@ def stretch_cloth(ur5, distance, arm_linear_acceleration, arm_linear_velocity):
     wait_time(distance/2, arm_linear_velocity, ARM_LINEAR_WAIT_TIME_FACTOR)
     
 
-# Define a Function to Fling Arms
-def fling(ur5, swing, drag):
+# Define a Function to Perform Fling action part 1
+def fling_1(ur5, swing):
     
     # Perform Fling action 1
     print("Flinging the Cloth")
@@ -377,8 +377,9 @@ def fling(ur5, swing, drag):
     # Perform Fling action 2
     fling_action_2(ur5, get_joint_angles(ur5), swing/2, arm_joint_angular_velocity = 2)
 
-    # Stretch Cloth
-    stretch_cloth(ur5, distance = 5, arm_linear_acceleration = 0.1, arm_linear_velocity = 1)
+
+# Define a Function to Perform Fling action part 2
+def fling_2(ur5, drag):
 
     # Perform Fling action 3
     fling_action_3(ur5, drag, arm_linear_acceleration = 0.1, arm_linear_velocity = 1)
