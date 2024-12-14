@@ -1,6 +1,7 @@
 #! /bin/env python3
 
 # Import Launch2 Script to Re-run launch.py for Initialisation
+import coordinate_transforms
 from launch2 import UR5
 import numpy as np
 import time
@@ -69,7 +70,7 @@ def convert_into_angles(radians):
 
 
 # Define a Function to Set Arms to Home Position
-def come_home_position(ur5):
+def come_home_position(ur5, ungrasp = True):
     
     # For every Arm
     print("Setting Home Position")
@@ -78,8 +79,9 @@ def come_home_position(ur5):
         # Goto Home position
         ur5.URs.moveJ(arm, (convert_into_radians(home_angles[arm]), ARM_JOINT_ANGULAR_VELOCITY, ARM_JOINT_ANGULAR_VELOCITY))
 
-    # Open Gripper
-    ur5.URs.get_gripper(arm).set(3)
+    # Open Gripper if Ungrasp is True
+    if ungrasp:
+        ur5.URs.get_gripper(arm).set(3)
     
     # Wait 5 seconds for Arms to Reach Home Position
     time.sleep(5)
@@ -259,7 +261,7 @@ def move_back_and_down(ur5, arm, distance, arm_linear_acceleration, arm_linear_v
     pose = ur5.URs.get_receive(arm).getActualTCPPose()
 
     # Update Pose to go Back
-    pose[2] -= (distance * STEP_DISTANCE)
+    pose[2] -= (1.5 * distance * STEP_DISTANCE)
 
     # Update Distance according to Arm
     if arm == "Lightning":
@@ -270,16 +272,6 @@ def move_back_and_down(ur5, arm, distance, arm_linear_acceleration, arm_linear_v
 
     # Move Arm Diagonally Back and Down
     ur5.URs.moveL(arm, (pose, arm_linear_acceleration, arm_linear_velocity))
-
-
-# Define a Function to Move Arms Up to Lift
-def move_arms_up_to_lift(ur5, distance, arm_linear_acceleration, arm_linear_velocity):
-
-    # Move Arms Up to Lift
-    print("Moving Arms Up to Lift")
-    for arm in arms:
-        move_up(ur5, arm, distance, arm_linear_acceleration, arm_linear_velocity)  
-    wait_time(distance, arm_linear_velocity, ARM_LINEAR_WAIT_TIME_FACTOR)
 
 
 # Define a Function to Get Joint Angles
@@ -356,24 +348,40 @@ def fling_action_3(ur5, distance, arm_linear_acceleration, arm_linear_velocity):
     
     # Wait to complete the action
     wait_time(distance * math.sqrt(2), arm_linear_velocity, ARM_LINEAR_WAIT_TIME_FACTOR)
+
+
+# Define a Function to Stretch the Cloth
+def stretch_cloth(ur5, distance, arm_linear_acceleration, arm_linear_velocity):
+
+    # Move Arms to Stretch the Cloth
+    for arm in arms:
+        if arm == "Thunder":
+            move_right(ur5, arm, distance/2, arm_linear_acceleration, arm_linear_velocity)
+        else:
+            move_left(ur5, arm, distance/2, arm_linear_acceleration, arm_linear_velocity)
+    
+    # Wait to complete the action
+    wait_time(distance/2, arm_linear_velocity, ARM_LINEAR_WAIT_TIME_FACTOR)
     
 
 # Define a Function to Fling Arms
-def fling(ur5, swing, front, drag):
+def fling(ur5, swing, drag):
     
     # Perform Fling action 1
     print("Flinging the Cloth")
     fling_action_1(ur5, get_joint_angles(ur5), swing, arm_joint_angular_velocity = 3)
 
-    # Move Arms Front
-    move_both_arms_front(ur5, front, arm_linear_acceleration = 0.4, arm_linear_velocity = 3)
-    time.sleep(1)
-    
+    # Move Both Arms Front
+    move_both_arms_front(ur5, 10, arm_linear_acceleration = 0.1, arm_linear_velocity = 1)
+
     # Perform Fling action 2
-    fling_action_2(ur5, get_joint_angles(ur5), swing, arm_joint_angular_velocity = 3)
+    fling_action_2(ur5, get_joint_angles(ur5), swing/2, arm_joint_angular_velocity = 2)
+
+    # Stretch Cloth
+    stretch_cloth(ur5, distance = 5, arm_linear_acceleration = 0.1, arm_linear_velocity = 1)
 
     # Perform Fling action 3
-    fling_action_3(ur5, drag, arm_linear_acceleration = 0.2, arm_linear_velocity = 2)
+    fling_action_3(ur5, drag, arm_linear_acceleration = 0.1, arm_linear_velocity = 1)
     time.sleep(2)
 
     # Ungasp the Cloth
