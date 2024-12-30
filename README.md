@@ -1,2 +1,1 @@
-# foldbot
-RL for Cloth Manipulation
+## Cloth Manipulation using Self-supervised value network
