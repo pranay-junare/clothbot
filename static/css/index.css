@@ -134,4 +134,23 @@ body {
 }
 
 
+.carousel-image {
+  width: 100%; /* Full width of the container */
+  max-width: 500px; /* Set a maximum width */
+  height: auto; /* Maintain aspect ratio */
+  margin: 0 auto; /* Center the images */
+  display: block;
+}
 
+/* Optional: Adjust the container */
+#results-carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem; /* Add spacing between items */
+}
+
+.item {
+  text-align: center;
+}
